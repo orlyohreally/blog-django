@@ -1,0 +1,124 @@
+{%extends "base.html" %}
+{% load urlify %}
+{% block jumbotron%}
+<!--      <div class="container-fluid jumbotron">
+	  <h1>Navbar example</h1>
+        <p>This example is a quick exercise to illustrate how the default, static navbar and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
+        <p>
+          <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+        </p>
+      </div>
+-->	  
+{% endblock jumbotron%}
+
+{% block content%}
+{% if request.user.is_staff or request.user.is_superuser %}
+<div class="create-btn" style = "border-radius:0px;">
+	<a href = "{{SITE_URL}}/posts/create"><h3 style = "text-align: center;">Create new post</h3></a>
+</div>
+{% endif %}
+<div class='col-sm-12'>      
+
+{% for obj in object_list %}
+  {% if obj.slug != "about" and obj.tag_list != "#about-myblog"%}
+  <div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+	<div class="thumbnail" style = "border-radius:0px;">
+	<div>
+	  <div style = "display:block; text-align:left; vertical-align:top; padding:9px;padding-bottom:3px;">
+			{% if obj.user.avatar%}
+				<div style = "display:inline-block; text-align:left; vertical-align:middle;"><img style = "height:50px; width:auto;"src = "{{obj.user.avatar.url}}"></img></div>
+			{% endif %}
+			<div style = "display:inline-block; text-align:left; vertical-align:top;"><h4 class = "user-name" style = "float:left;">
+			<p style = "font-size:25px;">{% if obj.user.get_full_name %}
+			{{obj.user.get_full_name}}
+		{% else %}
+			{{obj.user}}
+		{% endif %}
+		</p>
+			</h4></div>
+	   </div>
+	  
+	  
+	  </div>
+      <div style = "border-top:1px solid #ddd; margin-left:-5px; margin-right:-5px;"></div>
+	  {% if obj.image %}<a href = '{{obj.get_absolute_url}}'>{% endif %}
+  <div class="caption">
+	  {% if obj.image %}
+		<img src = '{{obj.image.url}}' class='img-responsive' style = 'max-width:container; height:auto; padding:10px;padding-left:0;padding-right:0;'></img>
+		{% endif %}
+	  
+        <h3 style = "padding:0;margin-top:0px;"><a href = '{{obj.get_absolute_url}}' class = "obj-title">{{obj.title}} </a><small  = "">{{obj.timestamp|timesince}} ago</small></h3>
+        <div style = "word-wrap:break-word;">
+		{{obj.content|linebreaks|truncatechars:150}}
+		</div>
+		{% if obj.tag_list != "" and obj.tag_list != ' ' %}
+			 <div>
+			<i class = "fa fa-tags"></i>
+			{% for tag in obj.get_tags %}
+				{% if tag != "" and tag != ' '%}
+					<a href = "{{SITE_URL}}/posts/search/{{tag}}"><span> #{{tag}} </span></a>
+				{% endif %}
+			{% endfor %}
+			</div>
+		{% endif %}
+		
+		
+	
+	  </div>
+	  </a>
+	  <div style = "border-top:1px solid #ddd; margin-left:-5px; margin-right:-5px;"></div>
+	<div style = "width:100%; padding:9px; padding-bottom:0px;display:inline-block;">
+	<a style = "margin-right:2px;" class = "pull-left post-btn" href="{{obj.get_absolute_url}}" role="button"><i class = "fa fa-search-plus fa-2x"></i></a>
+	{% if request.user.is_authenticated%}
+	<a href="{{obj.get_absolute_url}}/comment" class = "pull-left post-btn" role="button"><i class = "fa fa-comment-o fa-2x"></i></span></a>
+	{% endif %}
+	<div style = "margin-right:2px; display:inline-block;" class = "pull-left post-btn dropup">
+ <li style = "list-style:none;" class = "post-btn"id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <a href = "#" style = "text-decoration:none;"class = "push-left fa fa-share fa-2x"></a>
+  </li>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+    <li><a style = "margin-right:2px;" class ="pull-left post-btn" href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" role="button">
+		Share on <i class = "fa fa-facebook fa-2x"></i></a>	 
+	</li>
+    <li><a style = "margin-right:2px;" class ="pull-left post-btn" href="https://twitter.com/home?status={{instance.content|truncatechars:80|urlify}}%20{{ request.buitd_absolute_uri }}/"  role="button">
+		Share on <i class = "fa fa-twitter fa-2x"></i></a>	
+    </li>
+  </ul>
+</div>
+	{% if request.user.is_staff or request.user.is_superuser %}
+	<a href="{{obj.get_absolute_url}}/edit" class = "pull-right post-btn" role="button"><i class = "fa fa-pencil-square-o fa-2x"></i></span></a>
+	{% endif %}
+	</div>
+    </div>
+  </div>
+	 
+</div>
+{% endif %}
+{% endfor %}
+
+<nav aria-label="Page navigation" style = "text-align: center">
+  <ul class="pagination">
+    {% if object_list.has_previous %}
+            <li>
+      <a href="?page={{ object_list.previous_page_number }}" aria-label="Previous">
+		<span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+	{% endif %}
+        
+    {%for i in object_list.paginator.page_range%}
+	<li><a href="{{SITE_URL}}/posts/?page={{i}}">{{i}}</a></li>
+	{% endfor %}
+    {% if object_list.has_next %}
+          <li>
+       <a href="?page={{ object_list.next_page_number }}" aria-label="Next">
+		   
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>{% endif %}
+  </ul>
+</nav>
+
+</div>
+{% endblock content%}
