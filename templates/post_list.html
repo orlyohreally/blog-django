@@ -14,7 +14,7 @@
 {% block content%}
 {% if request.user.is_staff or request.user.is_superuser %}
 <div class="create-btn" style = "border-radius:0px;">
-	<a href = "{{SITE_URL}}/posts/create"><h3 style = "text-align: center;">Create new post</h3></a>
+	<a href = "/posts/create"><h3 style = "text-align: center;">Create new post</h3></a>
 </div>
 {% endif %}
 <div class='col-sm-12'>      
@@ -57,7 +57,7 @@
 			<i class = "fa fa-tags"></i>
 			{% for tag in obj.get_tags %}
 				{% if tag != "" and tag != ' '%}
-					<a href = "{{SITE_URL}}/posts/search/{{tag}}"><span> #{{tag}} </span></a>
+					<a href = "/posts/search/{{tag}}"><span> #{{tag}} </span></a>
 				{% endif %}
 			{% endfor %}
 			</div>
@@ -108,7 +108,7 @@
 	{% endif %}
         
     {%for i in object_list.paginator.page_range%}
-	<li><a href="{{SITE_URL}}/posts/?page={{i}}">{{i}}</a></li>
+	<li><a href="/posts/?page={{i}}">{{i}}</a></li>
 	{% endfor %}
     {% if object_list.has_next %}
           <li>
